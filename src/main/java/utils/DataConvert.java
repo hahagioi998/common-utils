@@ -3,6 +3,8 @@ package utils;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -12,6 +14,7 @@ import org.springframework.util.StringUtils;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -24,7 +27,7 @@ import java.util.Set;
 public enum DataConvert {
 
     ;
-
+    private static final Logger log = LoggerFactory.getLogger(DataConvert.class);
     private static final Mapper mapper = new DozerBeanMapper();
 
     /**
@@ -63,7 +66,7 @@ public enum DataConvert {
     /**
      * 对象 映射
      *
-     * @param source      映射原对象
+     * @param source 映射原对象
      * @param target 映射目标结果对象
      */
     public static void mapping(Object source, Object target) throws MappingException {
@@ -79,11 +82,12 @@ public enum DataConvert {
      */
     public static <T> T assembler(Object[] source, Class<T> clazz) throws InstantiationException, IllegalAccessException {
         T t = clazz.newInstance();
-        for (Object o : source) {
-            DataConvert.mergeNotNull(o, t);
+        for (Object s : source) {
+            DataConvert.mergeNotNull(s, t);
         }
         return t;
     }
+
 
     /**
      * 设置对象私有属性值
@@ -131,23 +135,52 @@ public enum DataConvert {
     /**
      * 合并 将给定源bean的属性值(不为null)覆盖到给定目标bean中,只要属性匹配
      *
-     * @param src    源bean
+     * @param source 源bean
      * @param target 目标bean
      */
-    public static void mergeNotNull(Object src, Object target) {
-        if (Objects.nonNull(src) && Objects.nonNull(target)) {
-            BeanWrapper wrapper = new BeanWrapperImpl(src);
+    public static void mergeNotNull(Object source, Object target) {
+        if (Objects.nonNull(source) && Objects.nonNull(target)) {
+            BeanWrapper wrapper = new BeanWrapperImpl(source);
             PropertyDescriptor[] pds = wrapper.getPropertyDescriptors();
             Set<String> properties = new HashSet<>();
             for (PropertyDescriptor propertyDescriptor : pds) {
                 String propertyName = propertyDescriptor.getName();
                 Object propertyValue = wrapper.getPropertyValue(propertyName);
                 if (StringUtils.isEmpty(propertyValue)) {
-                    wrapper.setPropertyValue(propertyName, null);
+                    wrapper.setPropertyValue(propertyName, propertyValue);
                     properties.add(propertyName);
                 }
             }
-            BeanUtils.copyProperties(src, target, properties.toArray(new String[0]));
+            BeanUtils.copyProperties(source, target, properties.toArray(new String[0]));
+        }
+    }
+    /**
+     * 合并(反射) 将给定源bean的属性值(不为null)覆盖到给定目标bean中,只要属性匹配
+     *
+     * @param source 源bean
+     * @param target 目标bean
+     */
+    public static void mergeNotNullReflect(Object source, Object target) {
+        if (Objects.nonNull(source) && Objects.nonNull(target)) {
+            Class newClass = target.getClass();
+            Field[] oldFields = source.getClass().getDeclaredFields();
+            Arrays.stream(oldFields).filter(field -> {
+                        field.setAccessible(true);
+                        try {
+                            return field.get(source) != null;
+                        } catch (IllegalAccessException e) {
+                            return Boolean.FALSE;
+                        }
+                    }
+            ).forEach(field -> {
+                try {
+                    Field newField = newClass.getDeclaredField(field.getName());
+                    newField.setAccessible(true);
+                    newField.set(target, field.get(source));
+                } catch (IllegalAccessException | NoSuchFieldException e) {
+                    log.error("printStackTrace", e);
+                }
+            });
         }
     }
 }

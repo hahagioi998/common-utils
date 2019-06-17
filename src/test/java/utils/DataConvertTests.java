@@ -41,31 +41,45 @@ public class DataConvertTests {
     public void reflect() throws InstantiationException, IllegalAccessException, NoSuchMethodException {
 
         TargetModel target = DataConvert.dto(source, TargetModel.class);         //DTO
-
         System.out.println("target : " + target);
         target.setAge(null);
         target.setName(null);
         target.setEmail("lisi@qq.com");
         target.setPassword("123444");
         target.setTelephone("1234456678");
-
         AssemblerModel assembler = DataConvert.dto(target, AssemblerModel.class); //DTO
-
         System.out.println("source : " + source);
         System.out.println("assembler : " + assembler);
-
-        DataConvert.mergeNotNull(source, assembler);                            //合并不为空
-
+        DataConvert.mergeNotNullReflect(source, assembler);
         System.out.println("assembler : " + DataConvert.invokeNoArgsMethod(assembler, "toString")); //调用无参的toString方法
-
-
         Object[] args = {null};             //参数值
         Class[] argsType = {Integer.class}; //参数类型
-
         DataConvert.invokeArgsMethod(assembler, "setAge", args, argsType);     //调用assembler 的setAge方法 传参为null
-
         System.out.println("assembler : " + assembler);
+    }
 
+
+    @Test
+    public void compareMergeNotNull() throws InstantiationException, IllegalAccessException {
+        TargetModel target = DataConvert.mapping(source, TargetModel.class); //映射
+        DataConvert.mergeNotNull(source, target);
+        DataConvert.mergeNotNullReflect(source, target);
+
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < 1000; i++) {
+            DataConvert.mergeNotNull(source, target);
+
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println("mergeNotNull costs time : " + (endTime - startTime) + " ms");
+
+
+        long startTimeReflect = System.currentTimeMillis();
+        for (int j = 0; j < 1000; j++) {
+            DataConvert.mergeNotNullReflect(source, target);
+        }
+        long endTimeReflect = System.currentTimeMillis();
+        System.out.println("mergeNotNullReflect costs time : " + (endTimeReflect - startTimeReflect) + " ms");
 
     }
 }
