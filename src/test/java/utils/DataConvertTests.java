@@ -3,6 +3,7 @@ package utils;
 import org.junit.Test;
 import utils.model.AssemblerModel;
 import utils.model.SourceModel;
+import utils.model.TargetExtends;
 import utils.model.TargetModel;
 
 /**
@@ -15,7 +16,7 @@ public class DataConvertTests {
     @Test
     public void mapping() throws InstantiationException, IllegalAccessException {
 
-        TargetModel target = DataConvert.mapping(source, TargetModel.class); //映射
+        TargetModel target = DataConvert.dto(source, TargetModel.class); //映射
 
         System.out.println("target : " + target);
         target.setAge(22);
@@ -24,7 +25,7 @@ public class DataConvertTests {
         target.setPassword("123444");
         target.setTelephone("1234456678");
 
-        DataConvert.mapping(target, source);                        //映射
+        DataConvert.dto(target, source);                        //映射
 
         System.out.println("source : " + source);
         System.out.println("target : " + target);
@@ -61,7 +62,7 @@ public class DataConvertTests {
 
     @Test
     public void compareMergeNotNull() throws InstantiationException, IllegalAccessException {
-        TargetModel target = DataConvert.mapping(source, TargetModel.class); //映射
+        TargetModel target = DataConvert.dto(source, TargetModel.class); //映射
         DataConvert.mergeNotNull(source, target);
         DataConvert.mergeNotNullReflect(source, target);
 
@@ -82,4 +83,12 @@ public class DataConvertTests {
         System.out.println("mergeNotNullReflect costs time : " + (endTimeReflect - startTimeReflect) + " ms");
 
     }
+
+
+    @Test
+    public void beanAllNull() {
+        TargetExtends targetExtends = new TargetExtends();
+        System.out.println(DataConvert.beanAllNull(targetExtends));
+    }
+
 }

@@ -1,8 +1,5 @@
 package utils;
 
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
-import org.dozer.MappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -22,13 +19,12 @@ import java.util.Set;
 /**
  * Created by EalenXie on 2019/6/5 10:44.
  * 数据转换类
- * 依赖于 Dozer, BeanUtils 和 ReflectionUtils
+ * 依赖于 BeanUtils 和 ReflectionUtils
  */
 public enum DataConvert {
 
     ;
     private static final Logger log = LoggerFactory.getLogger(DataConvert.class);
-    private static final Mapper mapper = new DozerBeanMapper();
 
     /**
      * Data To Object
@@ -50,27 +46,6 @@ public enum DataConvert {
      */
     public static void dto(Object source, Object target) {
         if (Objects.nonNull(source) && Objects.nonNull(target)) BeanUtils.copyProperties(source, target);
-    }
-
-    /**
-     * 新对象 映射
-     *
-     * @param source 映射原对象
-     * @param clazz  映射目标结果类(对象)
-     */
-    public static <T> T mapping(Object source, Class<T> clazz) throws MappingException, IllegalAccessException, InstantiationException {
-        if (Objects.nonNull(source)) return mapper.map(source, clazz);
-        return clazz.newInstance();
-    }
-
-    /**
-     * 对象 映射
-     *
-     * @param source 映射原对象
-     * @param target 映射目标结果对象
-     */
-    public static void mapping(Object source, Object target) throws MappingException {
-        if (Objects.nonNull(source) && Objects.nonNull(target)) mapper.map(source, target);
     }
 
     /**
@@ -135,12 +110,12 @@ public enum DataConvert {
     /**
      * 合并 将给定源bean的属性值(不为null)覆盖到给定目标bean中,只要属性匹配
      *
-     * @param source 源bean
-     * @param target 目标bean
+     * @param sourceBean 源bean
+     * @param targetBean 目标bean
      */
-    public static void mergeNotNull(Object source, Object target) {
-        if (Objects.nonNull(source) && Objects.nonNull(target)) {
-            BeanWrapper wrapper = new BeanWrapperImpl(source);
+    public static void mergeNotNull(Object sourceBean, Object targetBean) {
+        if (Objects.nonNull(sourceBean) && Objects.nonNull(targetBean)) {
+            BeanWrapper wrapper = new BeanWrapperImpl(sourceBean);
             PropertyDescriptor[] pds = wrapper.getPropertyDescriptors();
             Set<String> properties = new HashSet<>();
             for (PropertyDescriptor propertyDescriptor : pds) {
@@ -151,9 +126,10 @@ public enum DataConvert {
                     properties.add(propertyName);
                 }
             }
-            BeanUtils.copyProperties(source, target, properties.toArray(new String[0]));
+            BeanUtils.copyProperties(sourceBean, targetBean, properties.toArray(new String[0]));
         }
     }
+
     /**
      * 合并(反射) 将给定源bean的属性值(不为null)覆盖到给定目标bean中,只要属性匹配
      *
@@ -182,5 +158,22 @@ public enum DataConvert {
                 }
             });
         }
+    }
+
+    /**
+     * 检查一个JavaBean的所有属性是否为null
+     */
+    public static boolean beanAllNull(Object javaBean) {
+        if (Objects.isNull(javaBean)) return true;
+        BeanWrapper wrapper = new BeanWrapperImpl(javaBean);
+        PropertyDescriptor[] pds = wrapper.getPropertyDescriptors();
+        for (PropertyDescriptor descriptor : pds) {
+            if (!descriptor.getName().equals("class")) {
+                String propertyName = descriptor.getName();
+                Object propertyValue = wrapper.getPropertyValue(propertyName);
+                if (Objects.nonNull(propertyValue)) return false;
+            }
+        }
+        return true;
     }
 }
