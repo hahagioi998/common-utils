@@ -1,5 +1,9 @@
 package utils.model;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+
 /**
  * Created by EalenXie on 2019/6/6 10:03.
  */
@@ -10,6 +14,10 @@ public class TargetModel {
     private String telephone;
     private String password;
     private Integer age;
+
+    private String dh;
+
+    private String txCode;
 
     public TargetModel() {
     }
@@ -62,14 +70,24 @@ public class TargetModel {
         this.age = age;
     }
 
+    public String getDh() {
+        return dh;
+    }
+
+    public void setDh(String dh) {
+        this.dh = dh;
+    }
+
+    public String getTxCode() {
+        return txCode;
+    }
+
+    public void setTxCode(String txCode) {
+        this.txCode = txCode;
+    }
+
     @Override
     public String toString() {
-        return "TargetModel{" +
-                "name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", telephone='" + telephone + '\'' +
-                ", password='" + password + '\'' +
-                ", age=" + age +
-                '}';
+        return JSON.toJSONString(this, SerializerFeature.WriteMapNullValue);
     }
 }

@@ -1,10 +1,13 @@
 package utils;
 
 
+import com.alibaba.fastjson.JSONObject;
 import org.junit.Test;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by EalenXie on 2019/6/5 15:18.
@@ -42,6 +45,9 @@ public class DateHandlerTests {
 
     @Test
     public void cost() {
-        System.out.println(DateHandler.costTimeByMs(90061001));
+        System.out.println(DateHandler.format(new Date(), "yyMM"));
     }
+
+
+
 }

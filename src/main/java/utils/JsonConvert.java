@@ -1,7 +1,9 @@
 package utils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 import java.util.List;
 
@@ -12,14 +14,18 @@ import java.util.List;
 public class JsonConvert {
 
 
-    public static <T> T toJavaObject(String result, Class<T> clazz) {
-        return JSONObject.toJavaObject(JSONObject.parseObject(result), clazz);
+    public static <T> T toJavaObject(String target, Class<T> clazz) {
+        return JSONObject.parseObject(target, clazz);
     }
 
-    public static <T> List<T> toJavaList(String resultList, Class<T> clazz) {
-        return JSONArray.parseArray(resultList).toJavaList(clazz);
+    public static <T> List<T> toJavaList(String target, Class<T> clazz) {
+        return JSONArray.parseArray(target).toJavaList(clazz);
     }
 
+
+    public static String toJSONString(Object target) {
+        return JSON.toJSONString(target, SerializerFeature.WriteMapNullValue);
+    }
 
 
 }

@@ -16,7 +16,7 @@ public class DataConvertTests {
     @Test
     public void mapping() throws InstantiationException, IllegalAccessException {
 
-        TargetModel target = DataConvert.dto(source, TargetModel.class); //映射
+        TargetModel target = DataConvert.mapping(source, TargetModel.class); //映射
 
         System.out.println("target : " + target);
         target.setAge(22);
@@ -25,7 +25,7 @@ public class DataConvertTests {
         target.setPassword("123444");
         target.setTelephone("1234456678");
 
-        DataConvert.dto(target, source);                        //映射
+        DataConvert.mapping(target, source);                        //映射
 
         System.out.println("source : " + source);
         System.out.println("target : " + target);
@@ -41,14 +41,14 @@ public class DataConvertTests {
     @Test
     public void reflect() throws InstantiationException, IllegalAccessException, NoSuchMethodException {
 
-        TargetModel target = DataConvert.dto(source, TargetModel.class);         //DTO
+        TargetModel target = DataConvert.mapping(source, TargetModel.class);         //DTO
         System.out.println("target : " + target);
         target.setAge(null);
         target.setName(null);
         target.setEmail("lisi@qq.com");
         target.setPassword("123444");
         target.setTelephone("1234456678");
-        AssemblerModel assembler = DataConvert.dto(target, AssemblerModel.class); //DTO
+        AssemblerModel assembler = DataConvert.mapping(target, AssemblerModel.class); //DTO
         System.out.println("source : " + source);
         System.out.println("assembler : " + assembler);
         DataConvert.mergeNotNullReflect(source, assembler);
@@ -62,7 +62,7 @@ public class DataConvertTests {
 
     @Test
     public void compareMergeNotNull() throws InstantiationException, IllegalAccessException {
-        TargetModel target = DataConvert.dto(source, TargetModel.class); //映射
+        TargetModel target = DataConvert.mapping(source, TargetModel.class); //映射
         DataConvert.mergeNotNull(source, target);
         DataConvert.mergeNotNullReflect(source, target);
 
@@ -87,8 +87,7 @@ public class DataConvertTests {
 
     @Test
     public void beanAllNull() {
-        TargetExtends targetExtends = new TargetExtends();
-        System.out.println(DataConvert.beanAllNull(targetExtends));
+        System.out.println(DataConvert.beanAllNull(new TargetExtends()));
     }
 
 }

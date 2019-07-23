@@ -1,5 +1,8 @@
 package utils.model;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+
 /**
  * Created by EalenXie on 2019/6/6 10:02.
  */
@@ -43,10 +46,6 @@ public class SourceModel {
 
     @Override
     public String toString() {
-        return "SourceModel{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                ", gender='" + gender + '\'' +
-                '}';
+        return JSON.toJSONString(this, SerializerFeature.WriteMapNullValue);
     }
 }

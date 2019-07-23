@@ -32,7 +32,7 @@ public enum DataConvert {
      * @param source the source bean
      * @param clazz  the target bean
      */
-    public static <T> T dto(Object source, Class<T> clazz) throws IllegalAccessException, InstantiationException {
+    public static <T> T mapping(Object source, Class<T> clazz) throws IllegalAccessException, InstantiationException {
         T t = clazz.newInstance();
         if (Objects.nonNull(source)) BeanUtils.copyProperties(source, t);
         return t;
@@ -44,7 +44,7 @@ public enum DataConvert {
      * @param source the source bean
      * @param target the target bean
      */
-    public static void dto(Object source, Object target) {
+    public static void mapping(Object source, Object target) {
         if (Objects.nonNull(source) && Objects.nonNull(target)) BeanUtils.copyProperties(source, target);
     }
 
@@ -166,14 +166,19 @@ public enum DataConvert {
     public static boolean beanAllNull(Object javaBean) {
         if (Objects.isNull(javaBean)) return true;
         BeanWrapper wrapper = new BeanWrapperImpl(javaBean);
-        PropertyDescriptor[] pds = wrapper.getPropertyDescriptors();
-        for (PropertyDescriptor descriptor : pds) {
-            if (!descriptor.getName().equals("class")) {
-                String propertyName = descriptor.getName();
-                Object propertyValue = wrapper.getPropertyValue(propertyName);
+        PropertyDescriptor[] pds = getPropertyDescByObject(wrapper, javaBean);
+        for (PropertyDescriptor prop : pds) {
+            String propName = prop.getName();
+            if (StringUtils.isEmpty(propName) && !propName.equals("class")) {
+                Object propertyValue = wrapper.getPropertyValue(propName);
                 if (Objects.nonNull(propertyValue)) return false;
             }
         }
         return true;
+    }
+
+    private static PropertyDescriptor[] getPropertyDescByObject(BeanWrapper wrapper, Object bean) {
+        if (Objects.isNull(wrapper)) return new BeanWrapperImpl(bean).getPropertyDescriptors();
+        else return wrapper.getPropertyDescriptors();
     }
 }

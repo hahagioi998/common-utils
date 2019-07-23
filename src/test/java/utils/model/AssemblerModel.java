@@ -1,5 +1,8 @@
 package utils.model;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+
 /**
  * Created by EalenXie on 2019/6/6 10:45.
  */
@@ -61,13 +64,6 @@ public class AssemblerModel {
 
     @Override
     public String toString() {
-        return "AssemblerModel{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                ", gender='" + gender + '\'' +
-                ", email='" + email + '\'' +
-                ", telephone='" + telephone + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+        return JSON.toJSONString(this, SerializerFeature.WriteMapNullValue);
     }
 }
