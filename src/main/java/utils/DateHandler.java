@@ -17,24 +17,31 @@ public enum DateHandler {
 
     ;
 
+    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+    private static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final ZoneId DEFAULT_ZONE_ID = ZoneId.systemDefault();
-    private static final DateTimeFormatter DEFAULT_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final DateTimeFormatter DEFAULT_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+    private static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
 
     public static String formatDate(@NonNull Date date) {
-        return LocalDateTime.ofInstant(date.toInstant(), DEFAULT_ZONE_ID).format(DEFAULT_DATE_FORMAT);
+        return format(date, DEFAULT_ZONE_ID, DEFAULT_DATE_FORMATTER);
     }
 
     public static String formatDateTime(@NonNull Date date) {
-        return LocalDateTime.ofInstant(date.toInstant(), DEFAULT_ZONE_ID).format(DEFAULT_DATE_TIME_FORMAT);
+        return format(date, DEFAULT_ZONE_ID, DEFAULT_DATE_TIME_FORMATTER);
     }
 
     /**
      * 日期类型按自定义格式进行字符串化
      */
     public static String format(@NonNull Date date, @NonNull String format) {
-        return LocalDateTime.ofInstant(date.toInstant(), DEFAULT_ZONE_ID).format(DateTimeFormatter.ofPattern(format));
+        return format(date, DEFAULT_ZONE_ID, DateTimeFormatter.ofPattern(format));
     }
+
+    public static String format(@NonNull Date date, ZoneId zoneId, DateTimeFormatter formatter) {
+        return LocalDateTime.ofInstant(date.toInstant(), zoneId).format(formatter);
+    }
+
 
     /**
      * 日期是否是今天
@@ -50,7 +57,7 @@ public enum DateHandler {
      * @return 获取任意时间
      */
     public static String anyTimeByCurrentDay(int calendarEnum, int count) {
-        return LocalDateTime.ofInstant(getYourCalendar(new Date(), calendarEnum, count).toInstant(), DEFAULT_ZONE_ID).format(DEFAULT_DATE_TIME_FORMAT);
+        return LocalDateTime.ofInstant(getYourCalendar(new Date(), calendarEnum, count).toInstant(), DEFAULT_ZONE_ID).format(DEFAULT_DATE_TIME_FORMATTER);
     }
 
     /**
