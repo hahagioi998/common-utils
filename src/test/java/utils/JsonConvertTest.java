@@ -34,7 +34,7 @@ public class JsonConvertTest {
         model.setGender("男");
         model.setName("ealenxie");
         model.setPassword("admin");
-        System.out.println(JsonConvert.toJSONString(model));
+        System.out.println(DataSerializeConvert.toJSONString(model));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class JsonConvertTest {
                 "    \"password\": \"admin\",\n" +
                 "    \"telephone\": \"12323221\"\n" +
                 "  }";
-        AssemblerModel model = JsonConvert.toJavaObject(json, AssemblerModel.class);
+        AssemblerModel model = DataSerializeConvert.toJavaObject(json, AssemblerModel.class);
         System.out.println(model);
         String jsonList = "[\n" + "{\n" + "\"age\": 22,\n" + "\"email\": \"ealenxie@qq.com\",\n" + "\"gender\": \"男\",\n" +
                 "    \"name\": \"ealenxie\",\n" + "\"password\": \"admin\",\n" +
@@ -56,7 +56,7 @@ public class JsonConvertTest {
                 "    \"age\": 24,\n" + "    \"email\": \"admin@qq.com\",\n" +
                 "    \"gender\": \"男\",\n" + "\"name\": \"admin\",\n" +
                 "    \"password\": \"12233\",\n" + "\"telephone\": \"12323221\"\n" + "  }\n" + "]";
-        List<AssemblerModel> modelList = JsonConvert.toJavaList(jsonList, AssemblerModel.class);
+        List<AssemblerModel> modelList = DataSerializeConvert.toJavaList(jsonList, AssemblerModel.class);
         for (AssemblerModel assemblerModel : modelList) {
             System.out.println(assemblerModel);
         }
