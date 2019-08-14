@@ -23,6 +23,26 @@ public enum DateHandler {
     private static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
     private static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
 
+    /**
+     * 默认 字符串日期格式 yyyy-MM-dd HH:mm:ss
+     */
+    public static Date ofDate(String date) {
+        return ofDate(date, DEFAULT_ZONE_ID, DEFAULT_DATE_TIME_FORMATTER);
+    }
+
+
+    /**
+     * @param date   日期
+     * @param format 日期格式 (至少要精确到天)
+     */
+    public static Date ofDate(String date, String format) {
+        return ofDate(date, DEFAULT_ZONE_ID, DateTimeFormatter.ofPattern(format));
+    }
+
+    public static Date ofDate(String date, ZoneId zoneId, DateTimeFormatter formatter) {
+        return Date.from(LocalDate.parse(date, formatter).atStartOfDay().atZone(zoneId).toInstant());
+    }
+
     public static String formatDate(@NonNull Date date) {
         return format(date, DEFAULT_ZONE_ID, DEFAULT_DATE_FORMATTER);
     }
@@ -41,7 +61,6 @@ public enum DateHandler {
     public static String format(@NonNull Date date, ZoneId zoneId, DateTimeFormatter formatter) {
         return LocalDateTime.ofInstant(date.toInstant(), zoneId).format(formatter);
     }
-
 
     /**
      * 日期是否是今天
@@ -74,20 +93,28 @@ public enum DateHandler {
      * @return 将毫秒数换算成消耗的时间 如 : 90061001 换算成 1day 1hour 1min 1second 1ms
      */
     public static String costTimeByMs(long ms) {
-        final int S = 1000;
-        final int MIN = S * 60;
-        final int H = MIN * 60;
-        final int D = H * 24;
+        final int s = 1000;
+        final int min = s * 60;
+        final int h = min * 60;
+        final int d = h * 24;
         String result = "";
-        long day = ms / D;
-        long hour = (ms - day * D) / H;
-        long minute = (ms - day * D - hour * H) / MIN;
-        long second = (ms - day * D - hour * H - minute * MIN) / S;
-        long milliSecond = ms - day * D - hour * H - minute * MIN - second * S;
-        if (day != 0) result += day + "day ";
-        if (hour != 0) result += hour + "hour ";
-        if (minute != 0) result += minute + "min ";
-        if (second != 0) result += second + "second ";
+        long day = ms / d;
+        long hour = (ms - day * d) / h;
+        long minute = (ms - day * d - hour * h) / min;
+        long second = (ms - day * d - hour * h - minute * min) / s;
+        long milliSecond = ms - day * d - hour * h - minute * min - second * s;
+        if (day != 0) {
+            result += day + "day ";
+        }
+        if (hour != 0) {
+            result += hour + "hour ";
+        }
+        if (minute != 0) {
+            result += minute + "min ";
+        }
+        if (second != 0) {
+            result += second + "second ";
+        }
         result += milliSecond + "ms ";
         return result;
     }
