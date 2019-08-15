@@ -45,6 +45,21 @@ public class DateHandlerTests {
         System.out.println(DateHandler.format(new Date(), "yyMM"));
     }
 
+    @Test
+    public void costMs() {
+        System.out.println(DateHandler.costTimeByMs(System.currentTimeMillis()));
+        long startTime = System.currentTimeMillis();
+        try {
+            Thread.sleep(3669);
+            //do nothing
+        } catch (InterruptedException e) {
+            //ig
+        } finally {
 
+            long endTime = System.currentTimeMillis();
+            System.out.println(DateHandler.costTimeByMs(startTime, endTime));
+        }
+
+    }
 
 }
