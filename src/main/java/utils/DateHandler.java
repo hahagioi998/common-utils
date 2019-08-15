@@ -97,26 +97,28 @@ public enum DateHandler {
         final int min = s * 60;
         final int h = min * 60;
         final int d = h * 24;
-        String result = "";
         long day = ms / d;
         long hour = (ms - day * d) / h;
         long minute = (ms - day * d - hour * h) / min;
         long second = (ms - day * d - hour * h - minute * min) / s;
         long milliSecond = ms - day * d - hour * h - minute * min - second * s;
+        StringBuilder result = new StringBuilder();
         if (day != 0) {
-            result += day + "day ";
+            result.append(day).append("day ");
         }
         if (hour != 0) {
-            result += hour + "hour ";
+            result.append(hour).append("hour ");
         }
         if (minute != 0) {
-            result += minute + "min ";
+            result.append(minute).append("min ");
         }
         if (second != 0) {
-            result += second + "second ";
+            result.append(second).append("second ");
         }
-        result += milliSecond + "ms ";
-        return result;
+        if (milliSecond != 0) {
+            result.append(milliSecond).append("ms ");
+        }
+        return result.toString();
     }
 
     /**
