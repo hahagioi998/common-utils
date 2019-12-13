@@ -96,53 +96,16 @@ public enum DateHandler {
         return Date.from(getYourCalendar(new Date(), calendarEnum, count).toInstant());
     }
 
-
-    /**
-     * 根据毫秒数 获得天数
-     */
-    private static long getDayCount(long ms) {
-        return ms / D;
-    }
-
-    /**
-     * 根据毫秒数 获得小时数(除掉天数后的剩余小时数)
-     */
-    private static long getRemainHourCount(long ms, long dayCount) {
-        return (ms - dayCount * D) / H;
-    }
-
-    /**
-     * 根据毫秒数 获得分钟数(除掉天数,小时数后的剩余分钟数)
-     */
-    private static long getRemainMinCount(long ms, long dayCount, long hourCount) {
-        return (ms - dayCount * D - hourCount * H) / MIN;
-    }
-
-
-    /**
-     * 根据毫秒数 获得分钟数(除掉天数,小时数,分钟数后的剩余秒数)
-     */
-    private static long getRemainSecondCount(long ms, long dayCount, long hourCount, long minCount) {
-        return (ms - dayCount * D - hourCount * H - minCount * MIN) / S;
-    }
-
-    /**
-     * 根据毫秒数 获得分钟数(除掉天数,小时数,分钟数后的剩余秒数)
-     */
-    private static long getRemainMilliSecondCount(long ms, long dayCount, long hourCount, long minCount, long secondCount) {
-        return ms - dayCount * D - hourCount * H - minCount * MIN - secondCount * S;
-    }
-
     /**
      * @param costTime 消耗的毫秒数
      * @return 将毫秒数换算成消耗的时间 如 : 90061001 换算成 1day 1hour 1min 1second 1ms
      */
     public static String costTimeByMs(long costTime) {
-        long day = getDayCount(costTime);
-        long hour = getRemainHourCount(costTime, day);
-        long minute = getRemainMinCount(costTime, day, hour);
-        long second = getRemainSecondCount(costTime, day, hour, minute);
-        long milliSecond = getRemainMilliSecondCount(costTime, day, hour, minute, second);
+        long day = costTime / D;
+        long hour = (costTime - day * D) / H;
+        long minute = (costTime - day * D - hour * H) / MIN;
+        long second = (costTime - day * D - hour * H - minute * MIN) / S;
+        long milliSecond = costTime - day * D - hour * H - minute * MIN - second * S;
         StringBuilder result = new StringBuilder();
         if (day != 0) {
             //每年按平均365天算
