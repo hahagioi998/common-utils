@@ -1,23 +1,32 @@
 package utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by EalenXie on 2019/6/10 13:37.
  */
 public class ArrayUtils {
 
-    //删除数组中其中一个元素
+    /**
+     * 删除数组中其中一个元素
+     *
+     * @param array 目标数组
+     * @param value 目标元素
+     * @return 删除目标元素后的数组
+     */
     public static Object[] removeByValue(Object[] array, Object value) {
         List<Object> list = new ArrayList<>(Arrays.asList(array));
         list.remove(value);
         return list.toArray(new Object[1]);
     }
 
-    //在数组中增加一个元素
+    /**
+     * 在数组中增加一个元素
+     *
+     * @param array 目标数组
+     * @param value 目标元素
+     * @return 增加目标元素后的数组
+     */
     public static Object[] addByValue(Object[] array, Object value) {
         List<Object> list = new ArrayList<>(Arrays.asList(array));
         list.add(value);
@@ -59,5 +68,20 @@ public class ArrayUtils {
         int idx = 0;
         for (String s : set1) output[idx++] = s;
         return output;
+    }
+
+
+    /**
+     * 为null 或 为空
+     */
+    public static boolean nullOrEmpty(Collection<?> collection) {
+        return collection == null || collection.isEmpty();
+    }
+
+    /**
+     * 不为null 且 不为空
+     */
+    public static boolean notNullAndEmpty(Collection<?> collection) {
+        return collection != null && !collection.isEmpty();
     }
 }
