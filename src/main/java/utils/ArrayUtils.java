@@ -6,6 +6,8 @@ import java.util.*;
  * Created by EalenXie on 2019/6/10 13:37.
  */
 public class ArrayUtils {
+    private ArrayUtils() {
+    }
 
     /**
      * 删除数组中其中一个元素
@@ -84,4 +86,15 @@ public class ArrayUtils {
     public static boolean notNullAndEmpty(Collection<?> collection) {
         return collection != null && !collection.isEmpty();
     }
+
+    /**
+     * 不为null 且 不为空
+     */
+    public static boolean notNullAndEmpty(Collection... collections) {
+        for (Collection c : collections) {
+            if (nullOrEmpty(c)) return false;
+        }
+        return true;
+    }
+
 }

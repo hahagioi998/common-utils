@@ -11,9 +11,7 @@ import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
-import java.util.Collections;
 import java.util.List;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -56,6 +54,25 @@ public class FileConvert {
         size = ((double) length) / (1 << 10);
         if (size >= 1) return df.format(size) + "KB";
         return length + "B";
+    }
+
+    /**
+     * 根据长度得到格式大小(比如 : 1.81GB,1.83MB)
+     *
+     * @param length 文件长度
+     * @return 返回一个表示文件大小的字符串 比如 1.51G、1.82MB
+     */
+    public static String getFormatSize(long length) {
+        //换算单位
+        double kb = 1024;
+        double mb = kb * kb;
+        double gb = kb * mb;
+        double tb = kb * gb;
+        if (length < kb) return length + "B";
+        if (length < mb) return df.format(length / kb) + "KB";
+        if (length < gb) return df.format(length / mb) + "MB";
+        if (length < tb) return df.format(length / gb) + "GB";
+        return df.format(length / tb) + "TB";
     }
 
     /**
@@ -106,7 +123,7 @@ public class FileConvert {
                         try (OutputStream os = response.getOutputStream()) {
                             //打包下载
                             response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(file.getName() + ".zip", "UTF-8"));
-                            FileConvert.toZip(file.getPath(), os);
+                            ZipUtils.toZip(file, os);
                             response.flushBuffer();
                         }
                     } else {
@@ -146,97 +163,8 @@ public class FileConvert {
                 try (ZipOutputStream out = new ZipOutputStream(response.getOutputStream())) {
                     String fileNames = String.valueOf(files);
                     response.setHeader("Content-Disposition", "attachment;filename=" + fileNames);
-                    FileConvert.toZip2(files, out);
+                    ZipUtils.toZip(files, out);
                     response.flushBuffer();
-                }
-            }
-        }
-    }
-
-
-    public static void toZip(String srcDir, OutputStream out) {
-        toZip2(Collections.singletonList(new File(srcDir)), out);
-    }
-
-
-    /**
-     * 压缩成ZIP 方法2
-     *
-     * @param srcFiles 需要压缩的文件列表
-     * @param out      压缩文件输出流
-     */
-
-    public static void toZip2(List<File> srcFiles, OutputStream out) {
-        long start = System.currentTimeMillis();
-        try (ZipOutputStream zos = new ZipOutputStream(out)) {
-            for (File srcFile : srcFiles) {
-                compress(srcFile, zos, srcFile.getName());
-            }
-            log.info("压缩完成，耗时：{}ms", System.currentTimeMillis() - start);
-        } catch (IOException e) {
-            log.error("printStackTrace", e);
-        }
-    }
-
-
-    /**
-     * 递归压缩方法
-     *
-     * @param sourceFile 源文件
-     * @param zos        zip输出流
-     * @param name       压缩后的名称
-     *                   <p>
-     *                   false:所有文件跑到压缩包根目录下(注意：不保留目录结构可能会出现同名文件,会压缩失败)
-     */
-
-    private static void compress(File sourceFile, ZipOutputStream zos, String name) {
-        byte[] buf = new byte[5 * 1024 * 1024];
-        try {
-            if (sourceFile.isFile()) {
-                zos.putNextEntry(new ZipEntry(name));
-                int len;
-                try (FileInputStream in = new FileInputStream(sourceFile)) {
-                    while ((len = in.read(buf)) != -1) {
-                        zos.write(buf, 0, len);
-                    }
-                    zos.closeEntry();
-                }
-            } else {
-                File[] listFiles = sourceFile.listFiles();
-                if (listFiles == null || listFiles.length == 0) {
-                    zos.putNextEntry(new ZipEntry(name + "/"));
-                    zos.closeEntry();
-                } else {
-                    for (File file : listFiles) {
-                        compress(file, zos, name + "/" + file.getName());
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            log.error("printStackTrace", e);
-        }
-    }
-
-
-    /**
-     * 文件流合并
-     *
-     * @param target 最终流合并出来的文件
-     * @param source 合并文件列表(按默认排序开始合并)
-     */
-    public static void mergeFileIO(File target, File[] source) throws IOException {
-        try (FileChannel outChannel = new FileOutputStream(target).getChannel()) {
-            if (source != null && source.length != 0) {
-                for (File f : source) {
-                    try (FileChannel fc = new FileInputStream(f).getChannel()) {
-                        ByteBuffer bb = ByteBuffer.allocate(1024 * 8);
-                        while (fc.read(bb) != -1) {
-                            bb.flip();
-                            outChannel.write(bb);
-                            bb.clear();
-                        }
-                    }
                 }
             }
         }
