@@ -33,11 +33,9 @@ public class DataConvert {
      *
      * @param source 源对象
      * @param clazz  目标对象类型
-     * @throws InstantiationException {@link Class#newInstance()} will throw
-     * @throws IllegalAccessException {@link Class#newInstance()} will throw
      */
-    public static <T> T mapping(Object source, Class<T> clazz) throws IllegalAccessException, InstantiationException {
-        T t = clazz.newInstance();
+    public static <T> T mapping(Object source, Class<T> clazz) {
+        T t = BeanUtils.instantiateClass(clazz);
         mapping(source, t);
         return t;
     }
@@ -120,11 +118,9 @@ public class DataConvert {
      * @param source 要进行 合并和聚合的对象
      * @param clazz  聚合结果类(对象)
      * @return 返回 聚合对象
-     * @throws InstantiationException {@link Class#newInstance()} will throw
-     * @throws IllegalAccessException {@link Class#newInstance()} will throw
      */
-    public static <T> T assembler(Object[] source, Class<T> clazz) throws InstantiationException, IllegalAccessException {
-        T t = clazz.newInstance();
+    public static <T> T assembler(Object[] source, Class<T> clazz) {
+        T t = BeanUtils.instantiateClass(clazz);
         assembler(source, t);
         return t;
     }
