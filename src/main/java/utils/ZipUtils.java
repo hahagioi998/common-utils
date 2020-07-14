@@ -1,10 +1,7 @@
 package utils;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -29,6 +26,19 @@ public class ZipUtils {
         toZip(Collections.singletonList(src), out);
     }
 
+    /**
+     * 压缩成ZIP
+     *
+     * @param srcFiles 需要压缩的文件列表
+     * @param file     输出文件
+     */
+    public static void toZip(List<File> srcFiles, File file) throws IOException {
+        try (FileOutputStream out = new FileOutputStream(file); ZipOutputStream zos = new ZipOutputStream(out)) {
+            for (File srcFile : srcFiles) {
+                compress(srcFile, zos, srcFile.getName());
+            }
+        }
+    }
 
     /**
      * 压缩成ZIP

@@ -6,8 +6,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by EalenXie on 2019/6/5 10:42.
@@ -35,7 +37,11 @@ public enum DateHandler {
      * 默认 字符串日期格式 yyyy-MM-dd HH:mm:ss
      */
     public static Date ofDate(String date) {
-        return ofDate(date, DEFAULT_ZONE_ID, DEFAULT_DATE_TIME_FORMATTER);
+        try {
+            return ofDate(date, DEFAULT_ZONE_ID, DEFAULT_DATE_TIME_FORMATTER);
+        } catch (DateTimeParseException exception) {
+            return ofDate(date, DEFAULT_ZONE_ID, DEFAULT_DATE_FORMATTER);
+        }
     }
 
 
@@ -71,6 +77,51 @@ public enum DateHandler {
     }
 
     /**
+     * 获得某天最大时间 23:59:59
+     */
+    public static Date getEndOfDay(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        return calendar.getTime();
+    }
+
+    /**
+     * 获得某天最小时间  2019-04-10 00:00:00
+     */
+    public static Date getStartOfDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        return calendar.getTime();
+    }
+    /**
+     * 获取当月最后一天
+     */
+    public static Date getLastDayOfMonth(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        return calendar.getTime();
+    }
+
+    /**
+     * 获取当月第一天
+     */
+    public static Date getFirstDayOfMonth(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        return calendar.getTime();
+    }
+
+    /**
      * 日期是否是今天
      */
     public static boolean isCurrentDate(@NonNull Date date) {
@@ -79,12 +130,34 @@ public enum DateHandler {
     }
 
     /**
+     * 获取任意时间 前后天的时间
+     *
+     * @param calendarEnum 日期枚举 比如 Calendar.MONTH
+     * @param count        任意加减天数
+     * @return 获取任意时间
+     */
+    public static String anyTimeByDay(Date date, int calendarEnum, int count) {
+        return LocalDateTime.ofInstant(getYourCalendar(date, calendarEnum, count).toInstant(), DEFAULT_ZONE_ID).format(DEFAULT_DATE_TIME_FORMATTER);
+    }
+
+    /**
+     * 获取任意时间 前后天的时间
+     *
      * @param calendarEnum 日期枚举 比如 Calendar.MONTH
      * @param count        任意加减天数
      * @return 获取任意时间
      */
     public static String anyTimeByCurrentDay(int calendarEnum, int count) {
-        return LocalDateTime.ofInstant(getYourCalendar(new Date(), calendarEnum, count).toInstant(), DEFAULT_ZONE_ID).format(DEFAULT_DATE_TIME_FORMATTER);
+        return anyTimeByDay(new Date(), calendarEnum, count);
+    }
+
+    /**
+     * @param calendarEnum 日期枚举 比如 Calendar.MONTH Calendar.DAY
+     * @param count        任意加减天数
+     * @return 获取任意日期
+     */
+    public static Date anyDateByCurrentDay(int calendarEnum, int count) {
+        return anyDateByDay(new Date(), calendarEnum, count);
     }
 
     /**
@@ -92,8 +165,8 @@ public enum DateHandler {
      * @param count        任意加减天数
      * @return 获取任意日期
      */
-    public static Date anyDateByCurrentDay(int calendarEnum, int count) {
-        return Date.from(getYourCalendar(new Date(), calendarEnum, count).toInstant());
+    public static Date anyDateByDay(Date date, int calendarEnum, int count) {
+        return Date.from(getYourCalendar(date, calendarEnum, count).toInstant());
     }
 
     /**

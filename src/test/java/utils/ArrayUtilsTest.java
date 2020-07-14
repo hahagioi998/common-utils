@@ -20,9 +20,9 @@ public class ArrayUtilsTest {
 
     @Test
     public void add() {
-        Object[] arr1 = {"ss", "SSSS"};
-        ArrayUtils.addByValue(arr1, "kkkk");
-        System.out.println(Arrays.toString(arr1));
+        String[] arr1 = {"ss", "SSSS"};
+        Object[] kkkks = ArrayUtils.addByValue(arr1, "kkkk");
+        System.out.println(Arrays.toString(kkkks));
     }
 
     @Test

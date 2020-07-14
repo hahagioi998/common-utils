@@ -26,6 +26,11 @@ public class DateHandlerTests {
 
     @Test
     public void byCurrentDay() {
+
+
+        System.out.println("5分钟后 : " + DateHandler.anyTimeByCurrentDay(Calendar.MINUTE, 5));
+
+
         System.out.println("日期是否是今天 : " + DateHandler.isCurrentDate(DateHandler.anyDateByCurrentDay(Calendar.DATE, 0)));
         System.out.println("日期是否是今天 : " + DateHandler.isCurrentDate(DateHandler.anyDateByCurrentDay(Calendar.DATE, -1)));
         System.out.println("日期是否是今天 : " + DateHandler.isCurrentDate(DateHandler.anyDateByCurrentDay(Calendar.DATE, 1)));

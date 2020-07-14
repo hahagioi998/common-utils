@@ -90,8 +90,8 @@ public class ArrayUtils {
     /**
      * 不为null 且 不为空
      */
-    public static boolean notNullAndEmpty(Collection... collections) {
-        for (Collection c : collections) {
+    public static boolean notNullAndEmpty(Collection<?>... collections) {
+        for (Collection<?> c : collections) {
             if (nullOrEmpty(c)) return false;
         }
         return true;
