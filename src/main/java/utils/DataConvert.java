@@ -17,9 +17,8 @@ import java.util.*;
  * 数据转换类
  * 依赖于 BeanUtils(基于setter方法映射)  , cglib BeanCopier(类型属性名全相同映射)
  */
-public class DataConvert {
-    private DataConvert() {
-    }
+public enum DataConvert {
+    ;
 
     private static final Logger log = LoggerFactory.getLogger(DataConvert.class);
 
@@ -101,12 +100,13 @@ public class DataConvert {
             for (PropertyDescriptor propertyDescriptor : pds) {
                 String propertyName = propertyDescriptor.getName();
                 Object propertyValue = wrapper.getPropertyValue(propertyName);
-                if (StringUtils.isEmpty(propertyValue)) {
+                if (Objects.isNull(propertyValue) || ((propertyValue instanceof String) && StringUtils.isEmpty(propertyValue))) {
                     wrapper.setPropertyValue(propertyName, propertyValue);
                     properties.add(propertyName);
                 }
             }
             BeanUtils.copyProperties(sourceBean, targetBean, properties.toArray(new String[0]));
+            properties.clear();
         } else {
             log.warn("the source or target is null , mappingNotNull will do nothing");
         }

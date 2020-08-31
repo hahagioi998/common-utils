@@ -9,13 +9,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Created by EalenXie on 2019/6/5 10:42.
  * 日期处理类
  */
-public enum DateHandler {
+public enum DateConvert {
 
     ;
 
@@ -77,14 +76,12 @@ public enum DateHandler {
     }
 
     /**
-     * 获得某天最大时间 23:59:59
+     * 获得某天最大时间 23:59:59:999
      */
     public static Date getEndOfDay(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
+        setCalendarTime(calendar, 23, 59, 59, 999);
         return calendar.getTime();
     }
 
@@ -94,11 +91,10 @@ public enum DateHandler {
     public static Date getStartOfDate(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
+        setCalendarTime(calendar, 0, 0, 0, 0);
         return calendar.getTime();
     }
+
     /**
      * 获取当月最后一天
      */
@@ -234,4 +230,20 @@ public enum DateHandler {
         return calendar;
     }
 
+
+    /**
+     * 设置calender 时间
+     *
+     * @param calendar    calender对象
+     * @param hour        小时
+     * @param minute      分钟
+     * @param second      秒
+     * @param millisecond 毫秒
+     */
+    private static void setCalendarTime(Calendar calendar, int hour, int minute, int second, int millisecond) {
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, second);
+        calendar.set(Calendar.MILLISECOND, millisecond);
+    }
 }

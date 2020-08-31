@@ -177,7 +177,7 @@ public class ClassUtils {
     public static void setFieldValue(Object source, String fieldName, Object target) {
         Field field = ReflectionUtils.findField(source.getClass(), fieldName);
         if (field != null) {
-            field.setAccessible(true);
+            ReflectionUtils.makeAccessible(field);
             ReflectionUtils.setField(field, source, target);
         }
     }
@@ -190,10 +190,7 @@ public class ClassUtils {
      * @return 调用方法返回结果
      */
     public static Object invokeNoArgsMethod(Object source, String methodName) throws NoSuchMethodException {
-        Method method = ReflectionUtils.findMethod(source.getClass(), methodName);
-        if (method == null) throw new NoSuchMethodException();
-        method.setAccessible(true);
-        return ReflectionUtils.invokeMethod(method, source);
+        return invokeArgsMethod(source, methodName, null);
     }
 
     /**
@@ -208,7 +205,7 @@ public class ClassUtils {
     public static Object invokeArgsMethod(Object instance, String methodName, Object[] args, Class<?>... argsTypes) throws NoSuchMethodException {
         Method method = ReflectionUtils.findMethod(instance.getClass(), methodName, argsTypes);
         if (method == null) throw new NoSuchMethodException();
-        method.setAccessible(true);
+        ReflectionUtils.makeAccessible(method);
         return ReflectionUtils.invokeMethod(method, instance, args);
     }
 
