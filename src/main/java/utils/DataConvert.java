@@ -89,24 +89,12 @@ public enum DataConvert {
     /**
      * 映射(不为null的属性值才会映射) 将给定源bean的属性值(不为null)覆盖到给定目标bean中,只要属性匹配
      *
-     * @param sourceBean 源bean
-     * @param targetBean 目标bean
+     * @param source 源bean
+     * @param target 目标bean
      */
-    public static void mappingNotNull(Object sourceBean, Object targetBean) {
-        if (Objects.nonNull(sourceBean) && Objects.nonNull(targetBean)) {
-            BeanWrapper wrapper = new BeanWrapperImpl(sourceBean);
-            PropertyDescriptor[] pds = wrapper.getPropertyDescriptors();
-            Set<String> properties = new HashSet<>();
-            for (PropertyDescriptor propertyDescriptor : pds) {
-                String propertyName = propertyDescriptor.getName();
-                Object propertyValue = wrapper.getPropertyValue(propertyName);
-                if (Objects.isNull(propertyValue) || ((propertyValue instanceof String) && StringUtils.isEmpty(propertyValue))) {
-                    wrapper.setPropertyValue(propertyName, propertyValue);
-                    properties.add(propertyName);
-                }
-            }
-            BeanUtils.copyProperties(sourceBean, targetBean, properties.toArray(new String[0]));
-            properties.clear();
+    public static void mappingNotNull(Object source, Object target) {
+        if (Objects.nonNull(source) && Objects.nonNull(target)) {
+            BeanUtils.copyProperties(source, target, getNullProperties(source));
         } else {
             log.warn("the source or target is null , mappingNotNull will do nothing");
         }
@@ -141,5 +129,21 @@ public enum DataConvert {
         }
     }
 
-
+    /**
+     * 获取对象的空属性
+     */
+    private static String[] getNullProperties(Object src) {
+        BeanWrapper wrapper = new BeanWrapperImpl(src);
+        PropertyDescriptor[] pds = wrapper.getPropertyDescriptors();
+        Set<String> properties = new HashSet<>();
+        for (PropertyDescriptor propertyDescriptor : pds) {
+            String propertyName = propertyDescriptor.getName();
+            Object propertyValue = wrapper.getPropertyValue(propertyName);
+            if (Objects.isNull(propertyValue) || ((propertyValue instanceof String) && StringUtils.isEmpty(propertyValue))) {
+                wrapper.setPropertyValue(propertyName, propertyValue);
+                properties.add(propertyName);
+            }
+        }
+        return properties.toArray(new String[0]);
+    }
 }
